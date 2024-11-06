@@ -1,0 +1,15 @@
+.teacher-dashboard{
+    display: flex;
+    padding: 20px;
+    gap: 50px;
+}
+
+.teacher-dashboard--content{
+    width: 100%;
+    background: #fff;
+    flex: 1;
+    border-radius: 20px;
+    padding: 2rem;
+    gap: 1.5rem;
+    justify-content: space-between;
+}

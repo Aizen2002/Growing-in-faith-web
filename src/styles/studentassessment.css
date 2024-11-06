@@ -1,0 +1,47 @@
+.stud-ascontent {
+    padding: 20px;
+    /*background-color: #f0f0f0;*/
+}
+
+.module-title {
+    background-color: #1A7CA4;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+}
+
+.progress {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.units {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.unit-column {
+    width: 23%;
+    background-color: #9AB7D3;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.unit-column h4 {
+    font-size: 1em;
+    margin-bottom: 10px;
+}
+
+.assessment {
+    margin-bottom: 10px;
+}
+
+.assessment p {
+    margin: 5px 0;
+}
