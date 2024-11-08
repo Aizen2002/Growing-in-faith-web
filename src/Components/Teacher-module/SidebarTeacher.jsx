@@ -17,7 +17,7 @@ const SidebarTeacher = () => {
         </Link>
         <Link to="/teacher/teacher-assessment" className="item">
           <BiSolidReport className="icon" />
-          Student Assessment
+          Assessment
         </Link>
         <Link to="/teacher/student-register" className="item">
           <BiTask className="icon" />

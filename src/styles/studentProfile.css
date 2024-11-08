@@ -1,47 +1,122 @@
+/* Main profile container */
 .student-profile {
-  width: 100%;
-  max-width: 1200px; /* Increase max-width for better use of space */
-  margin: 0 auto;
-  background-color: #d9eaf7; /* Light blue background */
-  padding: 20px;
-  padding-bottom: 300px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  box-sizing: border-box; /* Includes padding in the width */
+  max-width: 1200px;
+  margin: auto;
+  padding: 30px;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
+/* Profile header */
 .profile-header {
-  background-color: #004d80; /* Darker blue header background */
-  color: white;
-  padding: 15px;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  text-align: center;
+  background-color: #526d82;
+  color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
 }
 
 .profile-header h2 {
   margin: 0;
-  font-size: 1.5em;
+  font-size: 28px; /* Increased font size */
 }
 
 .profile-header p {
-  font-size: 0.9em;
-  margin-top: 5px;
+  font-size: 16px; /* Increased font size */
+  margin: 8px 0 0;
 }
 
+/* Profile information */
 .profile-info {
-  padding: 15px;
+  text-align: left;
+  font-size: 18px; /* Increased font size */
 }
 
 .profile-info p {
-  font-size: 1em;
   margin: 10px 0;
+}
+
+/* Logout button */
+.logout-button {
+  background-color: #526d82;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 12px 25px;
+  font-size: 18px; /* Increased font size */
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 30px;
+}
+
+.logout-button:hover {
+  background-color: #3b4d62;
+}
+
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Modal content */
+.spmodal {
+  background-color: #ffffff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  width: 90%;
+  max-width: 450px; /* Slightly larger modal width */
+}
+
+.spmodal p {
+  margin-bottom: 25px;
+  font-size: 20px; /* Increased font size */
   color: #333;
 }
 
-.profile-info strong {
-  color: #004d80;
+/* Modal button container */
+.spmodal .confirm-button, .spmodal .cancel-button {
+  padding: 12px 25px;
+  font-size: 18px; /* Increased font size */
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin: 0 10px;
 }
+
+/* Confirm button */
+.spmodal .confirm-button {
+  background-color: #526d82;
+  color: white;
+}
+
+.spmodal .confirm-button:hover {
+  background-color: #3b4d62;
+}
+
+/* Cancel button */
+.spmodal .cancel-button {
+  background-color: #ccc;
+  color: black;
+}
+
+.spmodal .cancel-button:hover {
+  background-color: #aaa;
+}
+
 
 /* Responsive adjustments for smaller screens */
 @media (max-width: 1200px) {

@@ -1,7 +1,8 @@
+// StudentRegistration.jsx
 import React, { useState, useEffect } from "react";
-import { ref, push, set, onValue } from "firebase/database";
+import { ref, set, onValue } from "firebase/database";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { db, auth } from "../../firebase"; // Ensure 'auth' is imported from your Firebase config
+import { db, auth } from "../../firebase";
 import '../../styles/studentRegistration.css';
 
 const StudentRegistration = () => {
@@ -11,7 +12,6 @@ const StudentRegistration = () => {
     lastName: "",
     middleName: "",
     email: "",
-    phoneNumber: "",
     password: "",
     section: "",
     gender: "",
@@ -24,7 +24,12 @@ const StudentRegistration = () => {
     const studentsRef = ref(db, "students");
     onValue(studentsRef, (snapshot) => {
       const data = snapshot.val();
-      const studentList = data ? Object.entries(data).map(([id, details]) => ({ id, ...details })) : [];
+      const studentList = data 
+        ? Object.entries(data).map(([id, details]) => ({
+            id,
+            ...details,
+          }))
+        : [];
       setStudents(studentList);
     });
   }, []);
@@ -40,32 +45,23 @@ const StudentRegistration = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Create user in Firebase Authentication
     createUserWithEmailAndPassword(auth, formData.email, formData.password)
       .then((userCredential) => {
         const user = userCredential.user;
-        const studentID = user.uid; // Use Firebase Auth UID as the student ID for consistency
+        const studentID = formData.studentID;
 
-        // Prepare data to save in Realtime Database
         const newStudentData = { ...formData, studentID };
 
-        // Save full student data in "students" table
-        return set(ref(db, `students/${studentID}`), newStudentData)
+        return set(ref(db, `students/${user.uid}`), newStudentData)
           .then(() => {
-            // Create an entry in the "assessments" table with only selected fields
             const assessmentData = {
               studentID: studentID,
               name: `${formData.firstName} ${formData.lastName}`,
               section: formData.section,
               email: formData.email,
-              DanielAndLionsDen: {
-                Q1: "",
-                Q2: ""
-              }
             };
 
-            // Save assessment data to the "assessments" node using the same ID as the student
-            return set(ref(db, `assessments/${studentID}`), assessmentData);
+            return set(ref(db, `assessments/${user.uid}`), assessmentData);
           });
       })
       .then(() => {
@@ -76,7 +72,6 @@ const StudentRegistration = () => {
           lastName: "",
           middleName: "",
           email: "",
-          phoneNumber: "",
           password: "",
           section: "",
           gender: "",

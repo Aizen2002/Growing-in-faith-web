@@ -18,7 +18,7 @@ const TeachersContent = () => {
       case '/teacher/teacher-dashboard':
         return 'Dashboard';
       case '/teacher/teacher-assessment': // Ensure paths match
-        return 'Student Assessment';
+        return 'Assessment';
       case '/teacher/teacher-about':
         return 'About';
       case '/teacher/student-register':

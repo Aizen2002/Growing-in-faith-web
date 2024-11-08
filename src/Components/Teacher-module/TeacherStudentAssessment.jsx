@@ -1,39 +1,77 @@
-// TeacherStudentAssessment.jsx
 import React, { useEffect, useState } from 'react';
-import { db } from '../../firebase'; // Make sure this path is correct
+import { db } from '../../firebase';
 import { ref, onValue } from 'firebase/database';
-import '../../styles/teacherstudentassessment.css'; // Ensure you import the CSS for styling
+import '../../styles/teacherstudentassessment.css';
 
 const TeacherStudentAssessment = () => {
   const [students, setStudents] = useState([]);
-  const [loading, setLoading] = useState(true); // Loading state for data fetching
+  const [loading, setLoading] = useState(true);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const studentsRef = ref(db, 'students'); // Access the students node in Firebase
+    // Fetch all students from the database
+    const studentsRef = ref(db, 'students');
     onValue(studentsRef, (snapshot) => {
       const studentList = [];
       snapshot.forEach((childSnapshot) => {
         const studentData = childSnapshot.val();
         studentList.push({
-          id: childSnapshot.key, // Firebase key, in case you need it for other purposes
-          ...studentData, // Spread student data to include all fields
+          id: childSnapshot.key, // Firebase node ID
+          ...studentData,
         });
       });
       setStudents(studentList);
-      setLoading(false); // Set loading to false after data is fetched
+      setLoading(false);
     }, (error) => {
-      console.error("Error fetching student data:", error); // Error handling
-      setLoading(false); // Ensure loading is set to false even on error
+      console.error("Error fetching student data:", error);
+      setLoading(false);
     });
   }, []);
 
-  // Handle button click to view assessments (you may replace this with actual logic)
   const handleAssessmentClick = (studentID) => {
-    console.log(`View assessments for student ID: ${studentID}`);
-    // Add your logic to navigate or fetch assessment details
+    // Fetch assessment information for the specific student
+    const assessmentsRef = ref(db, `assessments/${studentID}`);
+    onValue(assessmentsRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const assessmentData = snapshot.val();
+
+        // Find the student details in the students list
+        const student = students.find((s) => s.id === studentID);
+
+        // Only keep the assessment data, excluding student information that is repeated
+        setSelectedStudent({
+          ...student,
+          assessmentData: filterAssessmentData(assessmentData),
+        });
+        setIsModalOpen(true);
+      } else {
+        console.log("No assessment data found for this student.");
+        setSelectedStudent(null);
+      }
+    });
   };
 
-  // Show loading message while fetching data
+  const filterAssessmentData = (data) => {
+    // Filter out any student information from the assessments data, if present
+    if (data) {
+      const filteredData = {};
+      Object.keys(data).forEach(key => {
+        // Keep only the assessment data (excluding fields like email, name, section, studentID)
+        if (key !== 'email' && key !== 'name' && key !== 'section' && key !== 'studentID') {
+          filteredData[key] = data[key];
+        }
+      });
+      return filteredData;
+    }
+    return {};
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedStudent(null);
+  };
+
   if (loading) {
     return <div>Loading student data...</div>;
   }
@@ -55,13 +93,12 @@ const TeacherStudentAssessment = () => {
           {students.length > 0 ? (
             students.map((student) => (
               <tr key={student.id}>
-                {/* Display actual fields as entered during registration */}
                 <td>{student.studentID || 'N/A'}</td>
                 <td>{`${student.firstName} ${student.lastName}`}</td>
                 <td>{student.email}</td>
                 <td>{student.section}</td>
                 <td>
-                  <button onClick={() => handleAssessmentClick(student.studentID)}>
+                  <button onClick={() => handleAssessmentClick(student.id)}>
                     Click to view
                   </button>
                 </td>
@@ -74,6 +111,53 @@ const TeacherStudentAssessment = () => {
           )}
         </tbody>
       </table>
+
+      {isModalOpen && selectedStudent && (
+        <div className="assessment-modal-overlay">
+          <div className="assessment-modal-content">
+            <h2>Assessment Details for {selectedStudent.studentID}</h2>
+
+            {/* Student Information Above Assessment Details */}
+            <h3>Student Information</h3>
+            <p><strong>Student ID:</strong> {selectedStudent.studentID || 'N/A'}</p>
+            <p><strong>Name:</strong> {`${selectedStudent.firstName} ${selectedStudent.lastName}`}</p>
+            <p><strong>Section:</strong> {selectedStudent.section}</p>
+
+            {/* Assessments Section - Display each assessment and its answers in a table */}
+            <h3>Assessments</h3>
+            {selectedStudent.assessmentData && Object.keys(selectedStudent.assessmentData).length > 0 ? (
+              <div className="assessment-sentences">
+                {Object.entries(selectedStudent.assessmentData).map(([assessmentName, answers]) => (
+                  <div key={assessmentName}>
+                    <h4>{assessmentName}</h4>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Question</th>
+                          <th>Answer</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Object.entries(answers).map(([question, answer]) => (
+                          <tr key={question}>
+                            <td>{question}</td>
+                            <td>{String(answer)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No assessment data available.</p>
+            )}
+
+            {/* Close Button */}
+            <button onClick={closeModal} className="assessment-close-button">Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

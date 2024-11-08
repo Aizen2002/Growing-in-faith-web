@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { db } from "../../firebase";
 import { ref, get } from "firebase/database";
 import "../../styles/studentProfile.css";
@@ -6,12 +7,12 @@ import "../../styles/studentProfile.css";
 const StudentProfile = () => {
     const [studentData, setStudentData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [studentId, setStudentId] = useState(null);
+    const [showModal, setShowModal] = useState(false); // State to show/hide modal
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchStudentData = async () => {
             const storedStudentId = localStorage.getItem('studentId'); // Retrieve stored student ID
-            setStudentId(storedStudentId); // Store studentId in state
 
             if (!storedStudentId) {
                 console.log("No student ID found in local storage.");
@@ -38,6 +39,19 @@ const StudentProfile = () => {
         fetchStudentData();
     }, []);
 
+    const handleLogout = () => {
+        localStorage.removeItem('studentId'); // Clear the student ID from local storage
+        navigate("/login"); // Redirect to the login page
+    };
+
+    const openModal = () => {
+        setShowModal(true); // Show the modal
+    };
+
+    const closeModal = () => {
+        setShowModal(false); // Hide the modal
+    };
+
     if (loading) {
         return <p>Loading...</p>;
     }
@@ -56,8 +70,25 @@ const StudentProfile = () => {
                 <p><strong>Section:</strong> {studentData.section}</p>
                 <p><strong>Gender:</strong> {studentData.gender}</p>
                 <p><strong>Email:</strong> {studentData.email}</p>
-                <p><strong>ID:</strong> {studentId}</p> {/* Display the studentId */}
+                <p><strong>Student ID:</strong> {studentData.studentID}</p>
             </div>
+            <button className="logout-button" onClick={openModal}>
+                Log Out
+            </button>
+
+            {showModal && (
+                <div className="modal-overlay">
+                    <div className="spmodal">
+                        <p>Are you sure you want to log out?</p>
+                        <button className="confirm-button" onClick={handleLogout}>
+                            Confirm
+                        </button>
+                        <button className="cancel-button" onClick={closeModal}>
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

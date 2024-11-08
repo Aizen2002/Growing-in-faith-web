@@ -1,49 +1,92 @@
-// StudentAssessment.jsx
 import React, { useEffect, useState } from 'react';
 import { getDatabase, ref, onValue } from 'firebase/database';
-import '../../styles/studentassessment.css'; // Ensure this CSS file exists for styling
+import '../../styles/studentassessment.css';
 
 const StudentAssessment = () => {
-  const [students, setStudents] = useState([]);
+  const [assessmentData, setAssessmentData] = useState(null);
+
+  const studentUniqueID = localStorage.getItem('studentId');
 
   useEffect(() => {
-    const db = getDatabase();
-    const studentsRef = ref(db, 'students'); // Update to match your Firebase structure
+    if (!studentUniqueID) {
+      console.error("Error: No student unique ID found. Please make sure you're logged in.");
+      return;
+    }
 
-    const unsubscribe = onValue(studentsRef, (snapshot) => {
-      const studentsData = [];
-      snapshot.forEach((childSnapshot) => {
-        const studentId = childSnapshot.key;
-        const studentData = childSnapshot.val();
-        studentsData.push({ studentId, ...studentData });
-      });
-      setStudents(studentsData);
+    const db = getDatabase();
+    const assessmentRef = ref(db, `assessments/${studentUniqueID}`);
+
+    const unsubscribe = onValue(assessmentRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+
+        // Filter out non-assessment data (e.g., 'email', 'name', etc.)
+        const assessmentOnlyData = Object.keys(data)
+          .filter(key => key.includes("Assessment")) // Only include keys that contain "Assessment"
+          .reduce((obj, key) => {
+            obj[key] = data[key];
+            return obj;
+          }, {});
+
+        // Map through assessment-only data for display
+        const assessmentList = Object.entries(assessmentOnlyData).map(([title, answers]) => {
+          const flattenedAnswers = Object.entries(answers).map(([question, answer]) => ({
+            question,
+            answer
+          }));
+          return {
+            title,
+            answers: flattenedAnswers
+          };
+        });
+
+        setAssessmentData(assessmentList);
+      } else {
+        console.log("No assessment data found for this student.");
+        setAssessmentData(null);
+      }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [studentUniqueID]);
+
+  if (!studentUniqueID) {
+    return <p>Error: No student unique ID found. Please make sure you're logged in.</p>;
+  }
 
   return (
-    <div className="stud-ascontent">
-      <h2 className="module-title">Assessment Module</h2>
-      <div className="progress">
-        <h3>Your Progress:</h3>
-        <div className="units">
-          {students.map((student) => (
-            <div className="unit-column" key={student.studentId}>
-              <h4>{student.name || `${student.firstName} ${student.lastName}`}</h4>
-              <div className="assessment">
-                <p>Assessment #1</p>
-                <p>{student.assessment1 || "Answer not available"}</p>
-              </div>
-              <div className="assessment">
-                <p>Assessment #2</p>
-                <p>{student.assessment2 || "Answer not available"}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+    <div className="assessment-container">
+      <h2>Assessment Details</h2>
+      {assessmentData ? (
+        <table className="assessment-table">
+          <thead>
+            <tr>
+              <th>Assessment Title</th>
+              <th>Question</th>
+              <th>Answer</th>
+            </tr>
+          </thead>
+          <tbody>
+            {assessmentData.map((assessment, index) => (
+              <React.Fragment key={index}>
+                {assessment.answers.map((answerObj, idx) => (
+                  <tr key={idx}>
+                    {idx === 0 && (
+                      <td rowSpan={assessment.answers.length}>
+                        {assessment.title}
+                      </td>
+                    )}
+                    <td>{answerObj.question}</td>
+                    <td>{answerObj.answer}</td>
+                  </tr>
+                ))}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p>No assessment data available for this student.</p>
+      )}
     </div>
   );
 };
