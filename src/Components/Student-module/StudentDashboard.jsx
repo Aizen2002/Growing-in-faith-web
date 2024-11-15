@@ -22,7 +22,7 @@ const StudentDashboard = () => {
                             the story.
                         </p>
                         <button className="button">
-                            <a href='https://drive.google.com/file/d/13ldcUyU-Z2PEiH2vbNgZ-yfeTXS1tCxc/view'>Download v1.0</a>
+                            <a href='https://drive.google.com/file/d/1wAUvzGf0-LokVhyKAbcze_H3wtZljt6D/view?usp=sharing'>Download v1.0</a>
                             </button>
                     </div>
 
