@@ -40,9 +40,14 @@ const TeacherProfile = () => {
     }, []);
 
     const handleLogout = () => {
-        localStorage.removeItem('teacherId'); // Clear the teacher ID from local storage
-        navigate("/login"); // Redirect to the login page
-    };
+        // Clear teacher-related data from localStorage
+        localStorage.removeItem('teacherId');
+        localStorage.removeItem('userEmail'); // Remove any other relevant keys for the teacher
+    
+        // Navigate to the login page after logging out
+        navigate('/login');
+      };
+    
 
     const openModal = () => {
         setShowModal(true); // Show the modal

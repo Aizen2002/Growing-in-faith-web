@@ -5,9 +5,8 @@
     height: 94vh;
 }
 
-.logo{
+.st-logo{
     text-align: center;
-    padding: 20px 20px 80px 20px;
     color: #27374d;
     align-items: center;
     display: flex;
@@ -41,3 +40,10 @@
     background: #27374d;
     color: #dde6ed;
 }
+
+.st-logo-image {
+    width: 300px;  /* Adjust size as needed */
+    padding: 20px 20px 80px 20px;
+    object-fit: contain;
+    cursor: pointer;
+  }

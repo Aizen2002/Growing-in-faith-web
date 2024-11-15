@@ -1,44 +1,58 @@
-// RegisteredTeachers.jsx
 import React, { useEffect, useState } from 'react';
 import { ref, onValue, remove, update } from 'firebase/database';
 import { db } from '../firebase';
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase'; // assuming you have firebase authentication setup
 import '../styles/registeredteachers.css';
 
 const RegisteredTeachers = () => {
   const [teachers, setTeachers] = useState([]);
+  const [filteredTeachers, setFilteredTeachers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [currentTeacher, setCurrentTeacher] = useState(null); // Store the teacher to be modified or deleted
-  const [deleteVerification, setDeleteVerification] = useState(''); // Store verification text for delete
+  const [currentTeacher, setCurrentTeacher] = useState(null);
+  const [deleteVerification, setDeleteVerification] = useState('');
+  const [showLogoutModal, setShowLogoutModal] = useState(false); // Add state for logout confirmation modal
 
   useEffect(() => {
     const teachersRef = ref(db, 'teachers');
     onValue(teachersRef, (snapshot) => {
       const data = snapshot.val();
       
-      // Convert data object into array with IDs
       const teacherList = data
         ? Object.keys(data).map((key) => ({ id: key, ...data[key] }))
         : [];
       
       setTeachers(teacherList);
+      setFilteredTeachers(teacherList);
     });
   }, []);
 
-  // Open modal with teacher data for editing
+  useEffect(() => {
+    if (searchQuery === '') {
+      setFilteredTeachers(teachers);
+    } else {
+      const filtered = teachers.filter((teacher) =>
+        teacher.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        teacher.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        teacher.email.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredTeachers(filtered);
+    }
+  }, [searchQuery, teachers]);
+
   const handleModify = (teacher) => {
     setCurrentTeacher(teacher);
     setShowModal(true);
   };
 
-  // Confirm deletion dialog
   const confirmDelete = (teacher) => {
     setCurrentTeacher(teacher);
-    setDeleteVerification(''); // Reset the verification input
+    setDeleteVerification('');
     setShowDeleteConfirm(true);
   };
 
-  // Function to delete a teacher entry
   const handleDelete = () => {
     if (deleteVerification === 'DELETE') {
       const teacherRef = ref(db, `teachers/${currentTeacher.id}`);
@@ -46,6 +60,7 @@ const RegisteredTeachers = () => {
         .then(() => {
           alert("Teacher deleted successfully.");
           setTeachers((prevTeachers) => prevTeachers.filter((t) => t.id !== currentTeacher.id));
+          setFilteredTeachers((prevTeachers) => prevTeachers.filter((t) => t.id !== currentTeacher.id));
           setShowDeleteConfirm(false);
         })
         .catch((error) => {
@@ -57,7 +72,6 @@ const RegisteredTeachers = () => {
     }
   };
 
-  // Function to handle form submission for modifying data
   const handleUpdate = (e) => {
     e.preventDefault();
     const teacherRef = ref(db, `teachers/${currentTeacher.id}`);
@@ -72,15 +86,43 @@ const RegisteredTeachers = () => {
       });
   };
 
-  // Handle form input changes in the modal
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCurrentTeacher({ ...currentTeacher, [name]: value });
   };
 
+ // Function to handle Log Out button click
+const handleLogoutClick = () => {
+  setShowLogoutModal(true); // Show the confirmation modal
+};
+
+// Function to log out the user and redirect to login page
+  const handleLogout = () => {
+    auth.signOut().then(() => {
+      // Clear session data if needed
+      localStorage.removeItem('user');
+      window.location.href = '/login'; // Redirect to login page
+    }).catch(error => {
+      console.error('Logout error', error);
+    });
+  };
+  // Function to cancel logout
+  const handleCancelLogout = () => {
+    setShowLogoutModal(false); // Close the confirmation modal without logging out
+  };
+
   return (
     <div className="container">
       <h2 className='rgstrd-t'>Registered Teachers</h2>
+
+      <input
+        type="text"
+        placeholder="Search by name or email"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="rt-search-box"
+      />
+
       <table className="teachers-table">
         <thead>
           <tr>
@@ -96,7 +138,7 @@ const RegisteredTeachers = () => {
           </tr>
         </thead>
         <tbody>
-          {teachers.map((teacher) => (
+          {filteredTeachers.map((teacher) => (
             <tr key={teacher.id}>
               <td>{teacher.id}</td>
               <td>{teacher.firstName}</td>
@@ -162,6 +204,20 @@ const RegisteredTeachers = () => {
             />
             <button onClick={handleDelete}>Confirm Delete</button>
             <button onClick={() => setShowDeleteConfirm(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {/* Log Out Button */}
+      <button onClick={handleLogoutClick} className="logout-btn">Log Out</button>
+
+      {/* Log Out Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="logout-modal">
+          <div className="logout-modal-content">
+            <p>Are you sure you want to log out?</p>
+            <button onClick={handleLogout} className="confirm-btn">Yes, Log Out</button>
+            <button onClick={handleCancelLogout} className="cancel-btn">Cancel</button>
           </div>
         </div>
       )}

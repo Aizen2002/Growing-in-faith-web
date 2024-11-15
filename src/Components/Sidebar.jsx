@@ -1,14 +1,19 @@
 import React from 'react';
-import { BiBookAlt, BiStats, BiTask } from 'react-icons/bi';
 import { Link } from 'react-router-dom';
+import { BiBookAlt, BiStats, BiTask } from 'react-icons/bi';
+import GIFLogo from '../assets/GIFLOGO.png';
 import '../styles/sidebar.css';
 
 const Sidebar = () => {
+  const handleLogoClick = () => {
+    window.location.reload();  // This will refresh the page
+  };
+
   return (
     <div className='menu'>
-      <div className="logo">
-        <BiBookAlt className='logo-icon'/>
-        <h2>Growing in Faith</h2>
+      <div className="sa-logo" onClick={handleLogoClick}>
+        <img src={GIFLogo} alt="Logo" className="logo-image" />
+
       </div>
 
       <div className="menu--list">

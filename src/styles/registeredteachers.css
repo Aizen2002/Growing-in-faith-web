@@ -29,7 +29,6 @@
 .teachers-table th,
 .teachers-table td {
   border: 1px solid #ddd;
-  padding: 16px;
   text-align: left;
   word-break: break-word;
   font-size: 1em;
@@ -162,4 +161,106 @@
   width: 100%;
   padding: 8px;
   margin-top: 10px;
+}
+
+.rt-search-box {
+  width: 50%;
+  padding: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.logout-btn {
+  display: block;
+  width: 200px;
+  margin: 20px auto;
+  padding: 10px;
+  background-color: #f44336; /* Red color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #d32f2f; /* Darker red on hover */
+  transform: scale(1.05); /* Slightly enlarge the button */
+}
+
+
+/* Log Out Button */
+.logout-btn {
+  display: block;
+  width: 200px;
+  margin: 20px auto;
+  padding: 10px;
+  background-color: #f44336; /* Red color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #d32f2f; /* Darker red on hover */
+  transform: scale(1.05); /* Slightly enlarge the button */
+}
+
+/* Modal Styles */
+.logout-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.logout-modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+  width: 300px;
+}
+
+.logout-modal-content p {
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.confirm-btn, .cancel-btn {
+  padding: 10px;
+  margin: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.confirm-btn {
+  background-color: #f44336; /* Red color */
+  color: white;
+}
+
+.confirm-btn:hover {
+  background-color: #d32f2f;
+}
+
+.cancel-btn {
+  background-color: #4caf50; /* Green color */
+  color: white;
+}
+
+.cancel-btn:hover {
+  background-color: #388e3c;
 }

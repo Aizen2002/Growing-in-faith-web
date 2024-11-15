@@ -53,8 +53,20 @@
     border-radius: 8px;
 }
 
+.dev-image {
+    max-width: 100%; /* Image responsive to container */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 8px;
+}
+
 .refe-details {
     flex: 2; /* Allow details to take more space */
+    min-width: 250px; /* Minimum width to prevent overlap */
+    text-align: justify; /* Justify text for better readability */
+}
+
+.dev-details {
+    flex:auto;
     min-width: 250px; /* Minimum width to prevent overlap */
     text-align: justify; /* Justify text for better readability */
 }

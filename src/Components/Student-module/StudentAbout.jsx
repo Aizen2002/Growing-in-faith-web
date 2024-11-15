@@ -1,5 +1,6 @@
 import React from 'react';
 import sampleImage from '../../assets/owtg.jpg';
+import sampleImage2 from '../../assets/GIFLanding.jpg';
 import developerImage1 from '../../assets/1x1jalatest.jpg';
 import developerImage2 from '../../assets/1x1falatest.jpg';
 import developerImage3 from '../../assets/1x1thlatest.jpg';
@@ -24,7 +25,21 @@ const StudentAbout = () => {
                     </div>
                     <div className="refe-details">
                         <p className="refe-description">
-                            Step into a world where the pages of "Our Way to God" come to life! In this immersive adventure, you’ll explore the rich landscapes and captivating characters inspired by the beloved stories of [Author's Name]. As you embark on your quest, navigate through treacherous terrains, solve intricate puzzles, and forge alliances with iconic figures from the book. Your choices will shape the narrative, offering a unique twist on the classic tales you know and love. Will you rise as a hero or succumb to the shadows? Discover the magic hidden within the chapters of [Book Title] and experience a story like never before!
+                            Step into a world where the pages of "Our Way to God" come to life! In this immersive adventure, you’ll explore the rich landscapes and captivating characters inspired by the beloved stories of Sr. Gewena Gay P. Villarubia. As you embark on your quest, navigate through treacherous terrains, solve intricate puzzles, and forge alliances with iconic figures from the book. Your choices will shape the narrative, offering a unique twist on the classic tales you know and love. Will you rise as a hero or succumb to the shadows? Discover the magic hidden within the chapters of Our Way To God and experience a story like never before!
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="outer-box-reference">
+                <div className="inner-box-reference">Development</div>
+                <div className="refe-container">
+                    <div className="refe-image-container">
+                        <img src={sampleImage2} alt="Development preview" className="dev-image" />
+                    </div>
+                    <div className="dev-details">
+                        <p className="refe-description">
+                            "Growing in Faith: A Christian Living 2D Story Application" is a game designed to engage Grade 8 students of Immaculate Conception Academy of Malabon in exploring and deepening their understanding of Christian values. Through interactive storytelling and immersive 2D graphics, students journey through scenarios that reflect real-life challenges and choices grounded in faith. The game encourages players to apply Christian principles as they navigate each situation, reinforcing positive decision-making skills aligned with their moral education. By integrating faith-based learning into a digital platform, the game aims to make Christian Living both enjoyable and meaningful for students.
                         </p>
                     </div>
                 </div>

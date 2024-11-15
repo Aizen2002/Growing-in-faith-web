@@ -115,3 +115,99 @@ form button:hover {
     right: 20px; /* Adjust as needed */
     z-index: 1000; /* Ensure it appears above other elements */
 }
+
+/* Styling for the password change modal */
+.password-change-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    display: none;
+    z-index: 1000;
+    /* Initially hidden, show it via JS (e.g., by adding 'display: block') */
+  }
+  
+  .password-change-modal.open {
+    display: block;
+  }
+  
+  .password-change-modal h2 {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .password-change-modal input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+  
+  .password-change-modal input[type="password"]:focus {
+    border-color: #526d82;
+  }
+  
+  .password-change-modal button {
+    width: 100%;
+    padding: 12px;
+    background-color: #526d82;
+    color: white;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .password-change-modal button:hover {
+    background-color: #415362;
+  }
+  
+  .password-change-modal button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    text-align: center;
+  }
+  
+  .modal-content input {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+  }
+  
+  .modal-content button {
+    padding: 10px 20px;
+    margin: 10px;
+  }
+  

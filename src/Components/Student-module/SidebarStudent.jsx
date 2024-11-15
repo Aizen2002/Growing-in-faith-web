@@ -1,14 +1,18 @@
 import React from 'react';
 import { BiBookAlt, BiStats, BiTask, BiHome, BiMessage, BiSolidReport } from 'react-icons/bi';
-import '../../styles/sidebarstudent.css'
+import '../../styles/sidebarstudent.css';
 import { Link } from 'react-router-dom';
+import LogoImage from '../../assets/GIFLOGO.png'; // Adjust path if needed
 
 const SidebarStudent = () => {
+  const handleLogoClick = () => {
+    window.location.reload(); // Refresh the page when logo is clicked
+  };
+
   return (
     <div className='menu'>
-      <div className='logo'>
-        <BiBookAlt className='logo-icon' />
-        <h2>Growing in Faith</h2>
+      <div className='ss-logo' onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
+        <img src={LogoImage} alt="Logo" className="ss-logo-image" /> {/* Use image as logo */}
       </div>
       <div className="menu--list">
         <Link to="/student/student-dashboard" className="item">
@@ -27,7 +31,7 @@ const SidebarStudent = () => {
           <BiStats className="icon" />
           Profile
         </Link>
-        {/* Add other teacher-specific links here */}
+        {/* Add other student-specific links here */}
       </div>
     </div>
   );

@@ -1,0 +1,90 @@
+.grading-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.grading-modal {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 1200px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.grading-modal h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.grading-modal table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
+}
+
+.grading-modal table th,
+.grading-modal table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+  font-size: 0.9rem;
+  word-break: break-word; /* Ensures long content wraps */
+}
+
+.grading-modal table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.grading-modal .assessment-section {
+  margin-bottom: 20px;
+}
+
+.submit-grade-button,
+.close-modal-button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.submit-grade-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.submit-grade-button:hover {
+  background-color: #45a049;
+}
+
+.close-modal-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.close-modal-button:hover {
+  background-color: #d32f2f;
+}
+
+.grading-modal .button-group {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 15px;
+}

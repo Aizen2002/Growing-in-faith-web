@@ -1,14 +1,18 @@
 import React from 'react';
 import { BiBookAlt, BiStats, BiTask, BiHome, BiMessage, BiSolidReport } from 'react-icons/bi';
 import { Link } from 'react-router-dom';
-import '../../styles/sidebarteacher.css'; // Import a different CSS file if needed
+import LogoImage from '../../assets/GIFLOGO.png'; // Adjust path if needed
+import '../../styles/sidebarteacher.css';
 
 const SidebarTeacher = () => {
+  const handleLogoClick = () => {
+    window.location.reload(); // This will refresh the page when the logo is clicked
+  };
+
   return (
     <div className='menu'>
-      <div className='logo'>
-        <BiBookAlt className='logo-icon' />
-        <h2>Growing in Faith</h2>
+      <div className='st-logo' onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
+        <img src={LogoImage} alt="Logo" className="st-logo-image" /> {/* Use the image as logo */}
       </div>
       <div className="menu--list">
         <Link to="/teacher/teacher-dashboard" className="item">

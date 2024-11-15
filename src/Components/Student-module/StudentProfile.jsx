@@ -40,9 +40,14 @@ const StudentProfile = () => {
     }, []);
 
     const handleLogout = () => {
-        localStorage.removeItem('studentId'); // Clear the student ID from local storage
-        navigate("/login"); // Redirect to the login page
-    };
+        // Clear localStorage to remove the authentication data
+        localStorage.removeItem('studentId');
+        localStorage.removeItem('userEmail'); // Or any other keys related to login
+    
+        // Navigate to login page after logout
+        navigate('/login');
+      };
+    
 
     const openModal = () => {
         setShowModal(true); // Show the modal

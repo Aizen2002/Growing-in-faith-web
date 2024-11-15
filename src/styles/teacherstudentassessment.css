@@ -46,7 +46,8 @@ table {
   margin-bottom: 20px;
 }
 
-table th, table td {
+table th,
+table td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
@@ -66,6 +67,44 @@ table tbody tr:nth-child(odd) {
   font-size: 18px;
   margin-top: 20px;
   color: #333;
+}
+
+/* Grading rubric styles - no table */
+.grading-rubric {
+  margin-top: 20px;
+}
+
+.grading-rubric h4 {
+  font-size: 20px;
+  color: #526d82;
+  margin-bottom: 10px;
+}
+
+.grading-rubric p {
+  font-size: 16px;
+  color: #333;
+  margin: 5px 0;
+}
+
+.grading-rubric ul {
+  list-style-type: none;
+  padding-left: 0;
+  font-size: 16px;
+}
+
+.grading-rubric li {
+  margin-bottom: 8px;
+  padding-left: 20px;
+  position: relative;
+}
+
+.grading-rubric li:before {
+  content: "•"; /* Bullet point symbol */
+  color: #526d82;
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 18px;
 }
 
 /* Close button for the modal */
@@ -88,23 +127,39 @@ table tbody tr:nth-child(odd) {
   background-color: #3f5a6f;
 }
 
-/* General content styles */
+/* Container for header and search input */
 .stud-assessment-content {
   padding: 20px;
 }
 
+/* Header styles */
 .stud-assessment-content h1 {
   font-size: 32px;
   color: #526d82;
+  margin-bottom: 10px; /* Adds space below the header */
 }
 
+/* Search input styling */
+.stud-assessment-content .search-input {
+  display: block; /* Ensures the input is on its own line */
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 400px;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+
+/* Table styling within the student assessment content */
 .stud-assessment-content table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
 }
 
-.stud-assessment-content th, .stud-assessment-content td {
+.stud-assessment-content th,
+.stud-assessment-content td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
@@ -132,3 +187,4 @@ table tbody tr:nth-child(odd) {
 .stud-assessment-content button:hover {
   background-color: #3f5a6f;
 }
+
