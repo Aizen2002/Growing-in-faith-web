@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { db } from '../../firebase';
 import { ref, onValue, update } from 'firebase/database';
 import '../../styles/teacherstudentassessment.css';
+import { ToastContainer } from 'react-toastify';
 import GradingModal from '../../Components/Teacher-module/GradingModal';
 
 const TeacherStudentAssessment = () => {
@@ -257,7 +258,7 @@ const TeacherStudentAssessment = () => {
           </div>
         </div>
       )}
-
+      <ToastContainer />
       {isGradingModalOpen && selectedStudent && (
         <GradingModal
           isOpen={isGradingModalOpen}

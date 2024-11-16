@@ -1,42 +1,45 @@
-import React, { useEffect, useState } from 'react';
-import { ref, onValue, remove, update } from 'firebase/database';
-import { db } from '../firebase';
-import { signOut } from 'firebase/auth';
-import { auth } from '../firebase'; // assuming you have firebase authentication setup
-import '../styles/registeredteachers.css';
+import React, { useEffect, useState } from "react";
+import { ref, onValue, remove, update } from "firebase/database";
+import { db } from "../firebase";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase";
+import "../styles/registeredteachers.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const RegisteredTeachers = () => {
   const [teachers, setTeachers] = useState([]);
   const [filteredTeachers, setFilteredTeachers] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [currentTeacher, setCurrentTeacher] = useState(null);
-  const [deleteVerification, setDeleteVerification] = useState('');
-  const [showLogoutModal, setShowLogoutModal] = useState(false); // Add state for logout confirmation modal
+  const [deleteVerification, setDeleteVerification] = useState("");
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
-    const teachersRef = ref(db, 'teachers');
+    const teachersRef = ref(db, "teachers");
     onValue(teachersRef, (snapshot) => {
       const data = snapshot.val();
-      
+
       const teacherList = data
         ? Object.keys(data).map((key) => ({ id: key, ...data[key] }))
         : [];
-      
+
       setTeachers(teacherList);
       setFilteredTeachers(teacherList);
     });
   }, []);
 
   useEffect(() => {
-    if (searchQuery === '') {
+    if (searchQuery === "") {
       setFilteredTeachers(teachers);
     } else {
-      const filtered = teachers.filter((teacher) =>
-        teacher.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        teacher.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        teacher.email.toLowerCase().includes(searchQuery.toLowerCase())
+      const filtered = teachers.filter(
+        (teacher) =>
+          teacher.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          teacher.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          teacher.email.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredTeachers(filtered);
     }
@@ -49,26 +52,39 @@ const RegisteredTeachers = () => {
 
   const confirmDelete = (teacher) => {
     setCurrentTeacher(teacher);
-    setDeleteVerification('');
+    setDeleteVerification("");
     setShowDeleteConfirm(true);
   };
 
   const handleDelete = () => {
-    if (deleteVerification === 'DELETE') {
+    if (deleteVerification === "DELETE") {
       const teacherRef = ref(db, `teachers/${currentTeacher.id}`);
       remove(teacherRef)
         .then(() => {
-          alert("Teacher deleted successfully.");
-          setTeachers((prevTeachers) => prevTeachers.filter((t) => t.id !== currentTeacher.id));
-          setFilteredTeachers((prevTeachers) => prevTeachers.filter((t) => t.id !== currentTeacher.id));
+          toast.success("Teacher deleted successfully!", {
+            position: "top-right",
+            autoClose: 3000,
+          });
+          setTeachers((prevTeachers) =>
+            prevTeachers.filter((t) => t.id !== currentTeacher.id)
+          );
+          setFilteredTeachers((prevTeachers) =>
+            prevTeachers.filter((t) => t.id !== currentTeacher.id)
+          );
           setShowDeleteConfirm(false);
         })
         .catch((error) => {
           console.error("Error deleting teacher:", error);
-          alert("Failed to delete the teacher.");
+          toast.error("Failed to delete the teacher.", {
+            position: "top-right",
+            autoClose: 3000,
+          });
         });
     } else {
-      alert("Please type DELETE to confirm.");
+      toast.warn("Please type DELETE to confirm.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     }
   };
 
@@ -77,12 +93,18 @@ const RegisteredTeachers = () => {
     const teacherRef = ref(db, `teachers/${currentTeacher.id}`);
     update(teacherRef, currentTeacher)
       .then(() => {
-        alert("Teacher updated successfully.");
+        toast.success("Teacher updated successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
         setShowModal(false);
       })
       .catch((error) => {
         console.error("Error updating teacher:", error);
-        alert("Failed to update the teacher.");
+        toast.error("Failed to update the teacher.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
       });
   };
 
@@ -91,29 +113,29 @@ const RegisteredTeachers = () => {
     setCurrentTeacher({ ...currentTeacher, [name]: value });
   };
 
- // Function to handle Log Out button click
-const handleLogoutClick = () => {
-  setShowLogoutModal(true); // Show the confirmation modal
-};
-
-// Function to log out the user and redirect to login page
-  const handleLogout = () => {
-    auth.signOut().then(() => {
-      // Clear session data if needed
-      localStorage.removeItem('user');
-      window.location.href = '/login'; // Redirect to login page
-    }).catch(error => {
-      console.error('Logout error', error);
-    });
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
   };
-  // Function to cancel logout
+
+  const handleLogout = () => {
+    auth
+      .signOut()
+      .then(() => {
+        localStorage.removeItem("user");
+        window.location.href = "/login";
+      })
+      .catch((error) => {
+        console.error("Logout error", error);
+      });
+  };
+
   const handleCancelLogout = () => {
-    setShowLogoutModal(false); // Close the confirmation modal without logging out
+    setShowLogoutModal(false);
   };
 
   return (
     <div className="container">
-      <h2 className='rgstrd-t'>Registered Teachers</h2>
+      <h2 className="rgstrd-t">Registered Teachers</h2>
 
       <input
         type="text"
@@ -149,53 +171,89 @@ const handleLogoutClick = () => {
               <td>{teacher.gender}</td>
               <td>{teacher.role}</td>
               <td>
-                <button onClick={() => handleModify(teacher)} className="modify-btn">Modify</button>
-                <button onClick={() => confirmDelete(teacher)} className="delete-btn">Delete</button>
+                <button
+                  onClick={() => handleModify(teacher)}
+                  className="modify-btn"
+                >
+                  Modify
+                </button>
+                <button
+                  onClick={() => confirmDelete(teacher)}
+                  className="delete-btn"
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {/* Modal for Modify */}
       {showModal && (
         <div className="modal">
           <div className="modal-content">
             <h3>Modify Teacher</h3>
             <form onSubmit={handleUpdate}>
               <label>First Name</label>
-              <input type="text" name="firstName" value={currentTeacher.firstName} onChange={handleChange} />
-              
+              <input
+                type="text"
+                name="firstName"
+                value={currentTeacher.firstName}
+                onChange={handleChange}
+              />
+
               <label>Last Name</label>
-              <input type="text" name="lastName" value={currentTeacher.lastName} onChange={handleChange} />
-              
+              <input
+                type="text"
+                name="lastName"
+                value={currentTeacher.lastName}
+                onChange={handleChange}
+              />
+
               <label>Middle Name</label>
-              <input type="text" name="middleName" value={currentTeacher.middleName} onChange={handleChange} />
-              
+              <input
+                type="text"
+                name="middleName"
+                value={currentTeacher.middleName}
+                onChange={handleChange}
+              />
+
               <label>Email</label>
-              <input type="email" name="email" value={currentTeacher.email} onChange={handleChange} />
-              
+              <input
+                type="email"
+                name="email"
+                value={currentTeacher.email}
+                onChange={handleChange}
+              />
+
               <label>Gender</label>
-              <select name="gender" value={currentTeacher.gender} onChange={handleChange}>
+              <select
+                name="gender"
+                value={currentTeacher.gender}
+                onChange={handleChange}
+              >
                 <option value="">Select gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
                 <option value="Other">Other</option>
               </select>
-              
+
               <button type="submit">Save Changes</button>
-              <button type="button" onClick={() => setShowModal(false)}>Cancel</button>
+              <button type="button" onClick={() => setShowModal(false)}>
+                Cancel
+              </button>
             </form>
           </div>
         </div>
       )}
 
-      {/* Delete Confirmation with Verification */}
       {showDeleteConfirm && (
         <div className="modal">
           <div className="modal-content">
             <p>Are you sure you want to delete this teacher?</p>
-            <p>Please type <strong>DELETE</strong> to confirm:</p>
+            <p>
+              Please type <strong>DELETE</strong> to confirm:
+            </p>
             <input
               type="text"
               value={deleteVerification}
@@ -208,19 +266,25 @@ const handleLogoutClick = () => {
         </div>
       )}
 
-      {/* Log Out Button */}
-      <button onClick={handleLogoutClick} className="logout-btn">Log Out</button>
+      <button onClick={handleLogoutClick} className="logout-btn">
+        Log Out
+      </button>
 
-      {/* Log Out Confirmation Modal */}
       {showLogoutModal && (
         <div className="logout-modal">
           <div className="logout-modal-content">
             <p>Are you sure you want to log out?</p>
-            <button onClick={handleLogout} className="confirm-btn">Yes, Log Out</button>
-            <button onClick={handleCancelLogout} className="cancel-btn">Cancel</button>
+            <button onClick={handleLogout} className="confirm-btn">
+              Yes, Log Out
+            </button>
+            <button onClick={handleCancelLogout} className="cancel-btn">
+              Cancel
+            </button>
           </div>
         </div>
       )}
+
+      <ToastContainer />
     </div>
   );
 };

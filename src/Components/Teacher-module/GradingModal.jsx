@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import { getDatabase, ref, set } from 'firebase/database';
+import { toast } from 'react-toastify'; // Import toast
+import 'react-toastify/dist/ReactToastify.css'; // Import the styles
 import '../../styles/gradingmodal.css';
 
 Modal.setAppElement('#root');
@@ -69,11 +71,13 @@ const GradingModal = ({ isOpen, onClose, onSubmitGrade, assessmentDetails, asses
     set(assessmentRef, gradesToSubmit)
       .then(() => {
         onSubmitGrade(gradesToSubmit); // Notify parent component
+        toast.success('Grades submitted successfully!'); // Show success toast
         onClose(); // Close modal
       })
       .catch((error) => {
         setError('An error occurred while submitting grades.');
         console.error(error);
+        toast.error('Error submitting grades. Please try again.'); // Show error toast
       });
   };
 

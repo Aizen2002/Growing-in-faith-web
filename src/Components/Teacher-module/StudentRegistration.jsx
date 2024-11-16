@@ -1,8 +1,9 @@
-// StudentRegistration.jsx
 import React, { useState, useEffect } from "react";
-import { ref, set, onValue } from "firebase/database";
+import { ref, set, onValue, update, remove } from "firebase/database";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { db, auth } from "../../firebase";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import '../../styles/studentRegistration.css';
 
 const StudentRegistration = () => {
@@ -19,12 +20,13 @@ const StudentRegistration = () => {
   });
 
   const [students, setStudents] = useState([]);
+  const [currentStudent, setCurrentStudent] = useState(null);
 
   useEffect(() => {
     const studentsRef = ref(db, "students");
     onValue(studentsRef, (snapshot) => {
       const data = snapshot.val();
-      const studentList = data 
+      const studentList = data
         ? Object.entries(data).map(([id, details]) => ({
             id,
             ...details,
@@ -45,48 +47,103 @@ const StudentRegistration = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    createUserWithEmailAndPassword(auth, formData.email, formData.password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        const studentID = formData.studentID;
-
-        const newStudentData = { ...formData, studentID };
-
-        return set(ref(db, `students/${user.uid}`), newStudentData)
-          .then(() => {
-            const assessmentData = {
-              studentID: studentID,
-              name: `${formData.firstName} ${formData.lastName}`,
-              section: formData.section,
-              email: formData.email,
-            };
-
-            return set(ref(db, `assessments/${user.uid}`), assessmentData);
+    if (currentStudent) {
+      const studentRef = ref(db, `students/${currentStudent.id}`);
+      update(studentRef, formData)
+        .then(() => {
+          toast.success("Student information updated successfully!");
+          setFormData({
+            studentID: "",
+            firstName: "",
+            lastName: "",
+            middleName: "",
+            email: "",
+            password: "",
+            section: "",
+            gender: "",
+            role: "Student",
           });
+          setCurrentStudent(null);
+        })
+        .catch((error) => {
+          console.error("Error updating student:", error);
+          toast.error("Failed to update the student.");
+        });
+    } else {
+      createUserWithEmailAndPassword(auth, formData.email, formData.password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          const studentID = formData.studentID;
+
+          const newStudentData = { ...formData, studentID };
+
+          return set(ref(db, `students/${user.uid}`), newStudentData)
+            .then(() => {
+              const assessmentData = {
+                studentID: studentID,
+                name: `${formData.firstName} ${formData.lastName}`,
+                section: formData.section,
+                email: formData.email,
+              };
+
+              return set(ref(db, `assessments/${user.uid}`), assessmentData);
+            });
+        })
+        .then(() => {
+          toast.success("Student registered and authenticated successfully!");
+          setFormData({
+            studentID: "",
+            firstName: "",
+            lastName: "",
+            middleName: "",
+            email: "",
+            password: "",
+            section: "",
+            gender: "",
+            role: "Student",
+          });
+        })
+        .catch((error) => {
+          console.error("Error during registration:", error);
+          toast.error("Failed to register the student.");
+        });
+    }
+  };
+
+  const handleModify = (student) => {
+    setCurrentStudent(student);
+    setFormData({
+      studentID: student.studentID,
+      firstName: student.firstName,
+      lastName: student.lastName,
+      middleName: student.middleName,
+      email: student.email,
+      password: "",
+      section: student.section,
+      gender: student.gender,
+      role: student.role,
+    });
+  };
+
+  const handleDelete = (studentId) => {
+    const studentRef = ref(db, `students/${studentId}`);
+    remove(studentRef)
+      .then(() => {
+        const assessmentRef = ref(db, `assessments/${studentId}`);
+        return remove(assessmentRef);
       })
       .then(() => {
-        alert("Student registered and authenticated successfully!");
-        setFormData({
-          studentID: "",
-          firstName: "",
-          lastName: "",
-          middleName: "",
-          email: "",
-          password: "",
-          section: "",
-          gender: "",
-          role: "Student",
-        });
+        toast.success("Student and their assessment data deleted successfully!");
       })
       .catch((error) => {
-        console.error("Error during registration:", error);
-        alert("Failed to register the student.");
+        console.error("Error deleting student or assessment:", error);
+        toast.error("Failed to delete the student and their assessment data.");
       });
   };
 
   return (
     <div className="form-container">
-      <h2 className="reg-title">Register a Student</h2>
+      <h2 className="reg-title">{currentStudent ? "Modify Student" : "Register a Student"}</h2>
       <form className="reg-form" onSubmit={handleSubmit}>
         {/* Registration form fields */}
         <div className="form-group">
@@ -134,7 +191,7 @@ const StudentRegistration = () => {
           <label>Role</label>
           <input type="text" name="role" value={formData.role} readOnly />
         </div>
-        <button type="submit">Register</button>
+        <button type="submit">{currentStudent ? "Update" : "Register"}</button>
       </form>
 
       {/* Registered Students Table */}
@@ -150,6 +207,7 @@ const StudentRegistration = () => {
               <th>Email</th>
               <th>Section</th>
               <th>Gender</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -163,6 +221,12 @@ const StudentRegistration = () => {
                   <td>{student.email}</td>
                   <td>{student.section}</td>
                   <td>{student.gender}</td>
+                  <td>
+                    <div className="actions-btns">
+                      <button onClick={() => handleModify(student)} className="modify-btn">Modify</button>
+                      <button onClick={() => handleDelete(student.id)} className="delete-btn">Delete</button>
+                    </div>
+                  </td>
                 </tr>
               ))
             ) : (
@@ -173,6 +237,9 @@ const StudentRegistration = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Toast notifications container */}
+      <ToastContainer />
     </div>
   );
 };

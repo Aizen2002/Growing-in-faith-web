@@ -104,3 +104,40 @@ button:hover {
 .student-table tbody tr:hover {
   background-color: #f1f1f1;
 }
+
+/* Add flexbox for the Modify and Delete buttons */
+.actions-btns {
+  display: flex;
+  gap: 10px;
+  /* Space between buttons */
+  justify-content: flex-start;
+  /* Align buttons to the left */
+}
+
+.modify-btn,
+.delete-btn {
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+.modify-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.modify-btn:hover {
+  background-color: #45a049;
+}
+
+.delete-btn:hover {
+  background-color: #e53935;
+}
