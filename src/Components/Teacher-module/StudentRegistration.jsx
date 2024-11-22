@@ -46,7 +46,19 @@ const StudentRegistration = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+  
+    // Validation for Student ID
+    if (formData.studentID.length !== 12) {
+      toast.error("Student ID must be exactly 12 characters long.");
+      return;
+    }
+  
+    // Validation for Password
+    if (formData.password.length < 8) {
+      toast.error("Password must be at least 8 characters long.");
+      return;
+    }
+  
     if (currentStudent) {
       const studentRef = ref(db, `students/${currentStudent.id}`);
       update(studentRef, formData)
@@ -74,9 +86,9 @@ const StudentRegistration = () => {
         .then((userCredential) => {
           const user = userCredential.user;
           const studentID = formData.studentID;
-
+  
           const newStudentData = { ...formData, studentID };
-
+  
           return set(ref(db, `students/${user.uid}`), newStudentData)
             .then(() => {
               const assessmentData = {
@@ -85,7 +97,7 @@ const StudentRegistration = () => {
                 section: formData.section,
                 email: formData.email,
               };
-
+  
               return set(ref(db, `assessments/${user.uid}`), assessmentData);
             });
         })
@@ -109,6 +121,7 @@ const StudentRegistration = () => {
         });
     }
   };
+  
 
   const handleModify = (student) => {
     setCurrentStudent(student);

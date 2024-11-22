@@ -28,8 +28,18 @@ const RegisterTeacher = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+  
+    // Password validation
+    if (formData.password.length < 8) {
+      toast.error("Password must be at least 8 characters long.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
+    }
+  
     const newTeacherRef = push(ref(db, "teachers"));
-
+  
     set(newTeacherRef, formData)
       .then(() => {
         toast.success("Teacher registered successfully!", {
@@ -56,7 +66,7 @@ const RegisterTeacher = () => {
         });
       });
   };
-
+  
   return (
     <div className="form-container">
       <h2 className="reg-title">Register a Teacher</h2>
