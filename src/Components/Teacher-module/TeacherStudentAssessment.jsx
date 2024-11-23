@@ -57,45 +57,56 @@ const TeacherStudentAssessment = () => {
   };
 
   const handleAssessmentClick = (studentID) => {
-    const assessmentsRef = ref(db, `assessments/${studentID}`);
-    onValue(assessmentsRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const assessmentData = snapshot.val();
-        const student = students.find((s) => s.id === studentID);
-  
-        // Check if there are incomplete grades
-        const gradesIncomplete = Object.values(assessmentData).some((assessment) => {
-          return assessment.grade === 0 || isNaN(assessment.grade);
-        });
-  
-        setSelectedStudent({
-          ...student,
-          assessmentData: filterAssessmentData(assessmentData),
-          status: assessmentData.status,
-        });
-  
-        // Allow grading if not all grades are completed
-        setIsGradingAllowed(gradesIncomplete || assessmentData.status !== 'graded');
-        setIsModalOpen(true);
-      } else {
-        console.log("No assessment data found for this student.");
-        setSelectedStudent(null);
-      }
-    });
-  };  
+  const assessmentsRef = ref(db, `assessments/${studentID}`);
+  onValue(assessmentsRef, (snapshot) => {
+    if (snapshot.exists()) {
+      const assessmentData = snapshot.val();
+      const student = students.find((s) => s.id === studentID);
 
-  const filterAssessmentData = (data) => {
-    if (data) {
-      const filteredData = {};
-      Object.keys(data).forEach(key => {
-        if (!['email', 'name', 'section', 'studentID', 'overallGrade', 'status'].includes(key)) {
-          filteredData[key] = data[key];
-        }
+      // Separate the assessments
+      const { regularAssessments, storyAssessments } = filterAssessmentData(assessmentData);
+
+      // Determine if grading is allowed
+      const gradesIncomplete = Object.values(regularAssessments).some(
+        (assessment) => assessment.grade === 0 || isNaN(assessment.grade)
+      );
+
+      setSelectedStudent({
+        ...student,
+        regularAssessments,
+        storyAssessments,
+        status: assessmentData.status,
       });
-      return filteredData;
+
+      setIsGradingAllowed(gradesIncomplete || assessmentData.status !== 'graded');
+      setIsModalOpen(true);
+    } else {
+      console.log('No assessment data found for this student.');
+      setSelectedStudent(null);
     }
-    return {};
-  };
+  });
+};
+
+
+ const filterAssessmentData = (data) => {
+  if (!data) return { regularAssessments: {}, storyAssessments: {} };
+
+  const regularAssessments = {};
+  const storyAssessments = {};
+
+  Object.keys(data).forEach((key) => {
+    if (key.startsWith('Story')) {
+      storyAssessments[key] = data[key]; // "Story 1-5" data
+    } else if (
+      !['email', 'name', 'section', 'studentID', 'overallGrade', 'status'].includes(key)
+    ) {
+      regularAssessments[key] = data[key]; // Regular assessments
+    }
+  });
+
+  return { regularAssessments, storyAssessments };
+};
+
 
   const openGradingModal = () => {
     if (isGradingAllowed) {
@@ -213,60 +224,100 @@ const TeacherStudentAssessment = () => {
       </table>
 
       {isModalOpen && selectedStudent && (
-        <div className="assessment-modal-overlay">
-          <div className="assessment-modal-content">
-            <h2>Assessment Details for {selectedStudent.studentID}</h2>
-            <h3>Status: {selectedStudent.status === 'graded' ? 'Graded' : 'Pending'}</h3>
+  <div className="assessment-modal-overlay">
+    <div className="assessment-modal-content">
+      <h2>Assessment Details for {selectedStudent.studentID}</h2>
+      <h3>Status: {selectedStudent.status === 'graded' ? 'Graded' : 'Pending'}</h3>
 
-            <h3>Student Information</h3>
-            <p><strong>Student ID:</strong> {selectedStudent.studentID || 'N/A'}</p>
-            <p><strong>Name:</strong> {`${selectedStudent.firstName} ${selectedStudent.lastName}`}</p>
-            <p><strong>Section:</strong> {selectedStudent.section}</p>
+      <h3>Student Information</h3>
+      <p><strong>Student ID:</strong> {selectedStudent.studentID || 'N/A'}</p>
+      <p><strong>Name:</strong> {`${selectedStudent.firstName} ${selectedStudent.lastName}`}</p>
+      <p><strong>Section:</strong> {selectedStudent.section}</p>
 
-            <h3>Assessments</h3>
-            {selectedStudent.assessmentData && Object.keys(selectedStudent.assessmentData).length > 0 ? (
-              <div className="assessment-sentences">
-                {Object.entries(selectedStudent.assessmentData).map(([assessmentName, answers]) => (
-                  <div key={assessmentName}>
-                    <h4>{assessmentName}</h4>
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Question</th>
-                          <th>Answer</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      {Object.entries(answers).map(([question, answer]) => (
-                        <tr key={question}>
-                          <td>{question}</td>
-                          <td>{typeof answer === 'object' ? (answer.grade || 'N/A') : answer}</td>
-                        </tr>
-                      ))}
-
-                      </tbody>
-                    </table>
-                  </div>
-                ))}
-                {isGradingAllowed && <button onClick={openGradingModal}>Grade Answers</button>}
+      {/* Regular Assessments */}
+      <h3>Assessments</h3>
+      {selectedStudent.regularAssessments &&
+      Object.keys(selectedStudent.regularAssessments).length > 0 ? (
+        <div className="assessment-sentences">
+          {Object.entries(selectedStudent.regularAssessments).map(
+            ([assessmentName, answers]) => (
+              <div key={assessmentName}>
+                <h4>{assessmentName}</h4>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Question</th>
+                      <th>Answer</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(answers).map(([question, answer]) => (
+                      <tr key={question}>
+                        <td>{question}</td>
+                        <td>
+                          {typeof answer === 'object'
+                            ? answer.grade || 'N/A'
+                            : answer}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            ) : (
-              <p>No assessment data available.</p>
-            )}
-            {gradingRubric}
-            <button onClick={closeModal} className="assessment-close-button">Close</button>
-          </div>
+            )
+          )}
+          {isGradingAllowed && <button onClick={openGradingModal}>Grade Answers</button>}
         </div>
+      ) : (
+        <p>No assessment data available.</p>
       )}
+
+      {/* Story Progress */}
+      <h3>Story Progress</h3>
+      {selectedStudent.storyAssessments &&
+      Object.keys(selectedStudent.storyAssessments).length > 0 ? (
+        <table>
+          <thead>
+            <tr>
+              <th>Story</th>
+              <th>Quiz Score</th>
+              <th>Completion Progress</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(selectedStudent.storyAssessments).map(
+              ([storyName, storyDetails]) => (
+                <tr key={storyName}>
+                  <td>{storyName}</td>
+                  <td>{storyDetails['Quiz Quest Score'] || 'N/A'}</td>
+                  <td>{storyDetails['Story Completion Progress'] || 'N/A'}</td>
+                </tr>
+              )
+            )}
+          </tbody>
+        </table>
+      ) : (
+        <p>No story progress data available.</p>
+      )}
+
+      {gradingRubric}
+      <button onClick={closeModal} className="assessment-close-button">
+        Close
+      </button>
+    </div>
+  </div>
+)}
+
       <ToastContainer />
       {isGradingModalOpen && selectedStudent && (
-        <GradingModal
-          isOpen={isGradingModalOpen}
-          onClose={closeGradingModal}
-          onSubmitGrade={handleGradeSubmit}
-          assessmentDetails={selectedStudent.assessmentData || {}}
-        />
-      )}
+  <GradingModal
+    isOpen={isGradingModalOpen}
+    onClose={closeGradingModal}
+    onSubmitGrade={handleGradeSubmit}
+    assessmentDetails={selectedStudent.regularAssessments || {}}
+  />
+)}
+
     </div>
   );
 };

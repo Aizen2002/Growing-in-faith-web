@@ -88,3 +88,90 @@
   justify-content: flex-end;
   margin-top: 15px;
 }
+
+/* Container for the comment section */
+.grading-comment-container {
+  margin-top: 20px;
+  /* Add some space between sections */
+  font-family: 'Arial', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Label styling for the comment field */
+.grading-comment-label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+/* Styling the textarea for better UX */
+.grading-comment {
+  width: 100%;
+  height: 120px;
+  /* Adjust height to make it more spacious */
+  padding: 10px;
+  font-size: 14px;
+  font-family: 'Arial', sans-serif;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: vertical;
+  /* Allow resizing of the textarea vertically */
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.grading-comment:focus {
+  border-color: #5e9eff;
+  /* Highlight border color when focused */
+  outline: none;
+}
+
+/* Optional: Add a subtle background color for the comment */
+.grading-comment-container .grading-comment {
+  background-color: #f9f9f9;
+}
+
+/* Feedback section styles */
+.feedback-section {
+  margin-top: 20px;
+  /* Add margin for spacing */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.feedback-section label {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.feedback-input {
+  resize: none;
+  /* Prevent resizing of textarea */
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  min-height: 100px;
+  /* Set a minimum height for the textarea */
+  max-height: 200px;
+  transition: border-color 0.3s ease;
+}
+
+.feedback-input:focus {
+  border-color: #526d82;
+  /* Change border color on focus */
+}
+
+.feedback-input::placeholder {
+  color: #aaa;
+}
+
+.feedback-section .error-message {
+  font-size: 0.9rem;
+  color: red;
+}
